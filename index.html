@@ -291,16 +291,21 @@ let state = {
 transacoes: [],
 mesAtual: new Date(),
 tipoAtual: 'receita',
-editandoId: null
+editandoId: null,
+regrasCat: {}
 };
 
 function carregar(){
 const d=localStorage.getItem('controleLar');
-if(d)state.transacoes=JSON.parse(d);
+if(d){
+const data=JSON.parse(d);
+state.transacoes=data.transacoes||data;
+state.regrasCat=data.regrasCat||{};
+}
 }
 
 function salvar(){
-localStorage.setItem('controleLar',JSON.stringify(state.transacoes));
+localStorage.setItem('controleLar',JSON.stringify({transacoes:state.transacoes,regrasCat:state.regrasCat}));
 }
 
 function formatar(v){return v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}
@@ -405,12 +410,12 @@ const cor=CORES[t.categoria]||'#999';
 const d=new Date(t.data+'T12:00:00');
 const dia=d.getDate();
 const sig=t.tipo==='receita'?'pos':'neg';
-return '<div class="gasto-item">'
+return '<div class="gasto-item" onclick="abrirModalEditar('+t.id+')">'
 +'<div class="cat-icon" style="background:'+cor+'22;color:'+cor+'">'+emo+'</div>'
 +'<div class="info"><div class="desc">'+escapeHtml(t.descricao||nomeCat)+'</div>'
 +'<div class="cat">'+nomeCat+' | '+dia+'/'+(d.getMonth()+1)+' | '+(t.pag||'')+'</div></div>'
 +'<div class="val '+sig+'">R$ '+formatar(t.valor)+'</div>'
-+'<button class="del" onclick="removerTransacao('+t.id+')">&times;</button>'
++'<button class="del" onclick="event.stopPropagation();removerTransacao('+t.id+')">&times;</button>'
 +'</div>';
 }
 
@@ -492,6 +497,22 @@ renderCatGrid();
 document.getElementById('modal').classList.add('show');
 }
 
+function abrirModalEditar(id){
+const t=state.transacoes.find(x=>x.id===id);
+if(!t)return;
+state.editandoId=id;
+document.getElementById('modalTitle').textContent='Editar Lancamento';
+document.getElementById('inputDesc').value=t.descricao;
+document.getElementById('inputValor').value=t.valor;
+document.getElementById('inputData').value=t.data;
+document.getElementById('inputPag').value=t.pag||'';
+catSelecionada=t.categoria;
+state.tipoAtual=t.tipo;
+document.querySelectorAll('.tipo-btn').forEach(b=>b.classList.toggle('active',b.dataset.tipo===t.tipo));
+renderCatGrid();
+document.getElementById('modal').classList.add('show');
+}
+
 function fecharModal(){
 document.getElementById('modal').classList.remove('show');
 }
@@ -508,8 +529,17 @@ if(!valor||valor<=0){alert('Informe um valor valido');return;}
 if(!data){alert('Informe a data');return;}
 if(tipo==='despesa'&&!pag){alert('Selecione a forma de pagamento');return;}
 
-const t={id:Date.now(),tipo,categoria:cat,descricao:desc||(tipo==='receita'?'Receita':'Despesa'),valor,data,pag};
-state.transacoes.push(t);
+const descFinal=desc||(tipo==='receita'?'Receita':'Despesa');
+const chave=tipo+':'+descFinal.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
+if(state.editandoId){
+const idx=state.transacoes.findIndex(x=>x.id===state.editandoId);
+if(idx>=0){
+state.transacoes[idx]={...state.transacoes[idx],tipo,categoria:cat,descricao:descFinal,valor,data,pag};
+}
+}else{
+state.transacoes.push({id:Date.now(),tipo,categoria:cat,descricao:descFinal,valor,data,pag});
+}
+if(descFinal!=='Receita'&&descFinal!=='Despesa')state.regrasCat[chave]=cat;
 salvar();
 fecharModal();
 atualizarHeader();
@@ -665,12 +695,16 @@ const el=document.getElementById('importLista');
 let h='<div style="margin-bottom:6px;font-size:.75rem;color:#666">Selecione a categoria de cada lancamento:</div>';
 importData.forEach((t,i)=>{
 const catsAtivas=CATS[t.tipo]||CATS.despesa;
+// Tenta achar categoria automaticamente pela descricao
+const chave=t.tipo+':'+t.descricao.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
+const catAuto=state.regrasCat[chave]||'';
 h+='<div class="import-item">';
 h+='<span class="idate">'+t.data.slice(5)+'</span>';
 h+='<span class="ival '+(t.tipo==='receita'?'pos':'neg')+'">R$ '+formatar(t.valor)+'</span>';
 h+='<span class="icat"><select data-idx="'+i+'">';
 catsAtivas.forEach(c=>{
-h+='<option value="'+c.id+'" '+(i===0&&t.tipo==='despesa'&&c.id==='outros-desp'?'selected':'')+'>'+c.nome+'</option>';
+const sel=c.id===catAuto||(!catAuto&&i===0&&t.tipo==='despesa'&&c.id==='outros-desp');
+h+='<option value="'+c.id+'" '+(sel?'selected':'')+'>'+c.nome+'</option>';
 });
 h+='</select></span>';
 h+='<span style="font-size:.7rem;color:#999;flex:1;text-overflow:ellipsis;overflow:hidden;white-space:nowrap">'+escapeHtml(t.descricao.slice(0,30))+'</span>';
@@ -687,8 +721,12 @@ const idx=parseInt(sel.dataset.idx);
 const cat=sel.value;
 const t=importData[idx];
 if(!t)return;
-const lanc={id:Date.now()+idx,tipo:t.tipo,categoria:cat,descricao:t.descricao||'Extrato',valor:t.valor,data:t.data,pag:t.pag||'debito'};
+const descFinal=t.descricao||'Extrato';
+const lanc={id:Date.now()+idx,tipo:t.tipo,categoria:cat,descricao:descFinal,valor:t.valor,data:t.data,pag:t.pag||'debito'};
 state.transacoes.push(lanc);
+// Memoriza categoria
+const chave=t.tipo+':'+descFinal.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
+if(descFinal!=='Extrato')state.regrasCat[chave]=cat;
 });
 salvar();
 importData=[];
