@@ -11,34 +11,37 @@
 <title>Controle Financeiro Lar</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f7fa;color:#1a1a2e;padding:0 0 80px 0;min-height:100vh}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(180deg,#f0f4ff 0%,#f5f7fa 100%);color:#1a1a2e;padding:0 0 80px 0;min-height:100vh}
 .hidden{display:none!important}
-.header{background:linear-gradient(135deg,#06d6a0,#118ab2);color:#fff;padding:20px 16px 24px;border-radius:0 0 24px 24px}
-.header h1{font-size:1.2rem;font-weight:600;display:flex;align-items:center;gap:8px;margin-bottom:4px}
-.header .sub{font-size:.75rem;opacity:.85;margin-bottom:12px}
-.mes-nav{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.15);border-radius:10px;padding:6px 10px;margin-bottom:12px}
-.mes-nav button{background:none;border:none;color:#fff;font-size:1.1rem;cursor:pointer;padding:4px 8px;border-radius:6px}
+.header{background:linear-gradient(135deg,#06d6a0,#0a9396,#118ab2);color:#fff;padding:20px 16px 24px;border-radius:0 0 28px 28px;position:relative;overflow:hidden}
+.header::after{content:'';position:absolute;top:-40px;right:-40px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.06)}
+.header::before{content:'';position:absolute;bottom:-20px;left:-20px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.04)}
+.header h1{font-size:1.2rem;font-weight:600;display:flex;align-items:center;gap:8px;margin-bottom:4px;position:relative;z-index:1}
+.header .sub{font-size:.75rem;opacity:.85;margin-bottom:12px;position:relative;z-index:1}
+.mes-nav{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.15);border-radius:12px;padding:6px 10px;margin-bottom:12px;backdrop-filter:blur(4px);position:relative;z-index:1}
+.mes-nav button{background:none;border:none;color:#fff;font-size:1.1rem;cursor:pointer;padding:4px 8px;border-radius:6px;transition:background .15s}
 .mes-nav button:active{background:rgba(255,255,255,.2)}
 .mes-nav span{font-size:.85rem;font-weight:600}
-.saldo-card{background:rgba(255,255,255,.12);border-radius:12px;padding:12px;text-align:center}
+.saldo-card{background:rgba(255,255,255,.12);border-radius:14px;padding:14px;text-align:center;backdrop-filter:blur(4px);position:relative;z-index:1}
 .saldo-card .label{font-size:.7rem;text-transform:uppercase;letter-spacing:.5px;opacity:.8}
 .saldo-card .valor{font-size:1.6rem;font-weight:700;margin-top:2px}
 .saldo-card .mini{display:flex;justify-content:space-between;margin-top:8px;font-size:.75rem}
 .saldo-card .mini .item{flex:1;text-align:center}
 .saldo-card .mini .v{font-weight:600;font-size:.9rem;margin-top:1px}
 
-.tabs{display:flex;gap:4px;margin:12px 12px 0;background:#f0f2f5;border-radius:10px;padding:3px}
+.tabs{display:flex;gap:4px;margin:12px 12px 0;background:#e8ecf2;border-radius:12px;padding:3px}
 .tab{flex:1;text-align:center;padding:9px;border-radius:8px;font-size:.8rem;font-weight:500;cursor:pointer;color:#888;transition:all .2s;user-select:none}
-.tab.active{background:#fff;color:#1a1a2e;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.tab.active{background:#fff;color:#1a1a2e;box-shadow:0 1px 3px rgba(0,0,0,.08);font-weight:600}
 .tab .ic{display:block;font-size:1.1rem;margin-bottom:1px}
 
 .content{padding:12px}
-.card{background:#fff;border-radius:12px;padding:14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.card{background:#fff;border-radius:14px;padding:16px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
 .card h3{font-size:.85rem;color:#16213e;margin-bottom:10px;display:flex;align-items:center;gap:6px}
 
-.gasto-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f5f5f5}
+.gasto-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f0f2f5;transition:background .1s;cursor:pointer;border-radius:8px;margin:0 -4px;padding:10px 4px}
+.gasto-item:active{background:#f8f9fb}
 .gasto-item:last-child{border-bottom:none}
-.gasto-item .cat-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.gasto-item .cat-icon{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
 .gasto-item .info{flex:1;min-width:0}
 .gasto-item .info .desc{font-size:.82rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .gasto-item .info .cat{font-size:.68rem;color:#999}
@@ -48,11 +51,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .gasto-item .del{background:none;border:none;color:#ccc;font-size:1rem;cursor:pointer;padding:4px;border-radius:6px}
 .gasto-item .del:active{background:#f0f0f0;color:#ef476f}
 
-.cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
-.cat-btn{padding:10px;border:1.5px solid #eee;border-radius:10px;background:#fff;text-align:center;cursor:pointer;font-size:.75rem;font-weight:500;transition:all .15s;font-family:inherit}
-.cat-btn:active{transform:scale(.97)}
-.cat-btn.sel{border-color:#06d6a0;background:#f0fff4;color:#06d6a0}
-.cat-btn .emo{font-size:1.2rem;display:block;margin-bottom:2px}
+.cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.cat-btn{padding:12px 8px;border:1.5px solid #eee;border-radius:12px;background:#fff;text-align:center;cursor:pointer;font-size:.75rem;font-weight:500;transition:all .15s;font-family:inherit;position:relative}
+.cat-btn:active{transform:scale(.96)}
+.cat-btn.sel{border-color:#06d6a0;background:#f0fff4;color:#06d6a0;box-shadow:0 0 0 2px rgba(6,214,160,.15)}
+.cat-btn .emo{font-size:1.3rem;display:block;margin-bottom:3px}
+.cat-edit-btn{position:absolute;top:-4px;right:-4px;font-size:.65rem;background:#fff;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(0,0,0,.15);opacity:0;transition:opacity .2s;cursor:pointer}
+.cat-btn:hover .cat-edit-btn,.cat-btn .cat-edit-btn:focus{opacity:1}
+.cat-grid:hover .cat-edit-btn{opacity:.4}
+.cat-edit-btn:hover{opacity:1!important}
 
 .form-group{margin-bottom:10px}
 .form-group label{display:block;font-size:.75rem;color:#666;margin-bottom:3px;font-weight:500}
@@ -65,39 +72,41 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .tipo-btn.rec.active{color:#06d6a0}
 .tipo-btn.desp.active{color:#ef476f}
 
-.btn{width:100%;padding:12px;border:none;border-radius:10px;font-size:.9rem;font-weight:600;cursor:pointer;font-family:inherit}
-.btn:active{opacity:.8}
-.btn-primary{background:#06d6a0;color:#fff}
+.btn{width:100%;padding:12px;border:none;border-radius:12px;font-size:.9rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+.btn:active{transform:scale(.98);opacity:.85}
+.btn-primary{background:linear-gradient(135deg,#06d6a0,#0a9396);color:#fff}
 .btn-outline{background:transparent;color:#06d6a0;border:1.5px solid #06d6a0}
 .btn-danger{background:#ef476f;color:#fff}
 
 .resumo-cat{margin-top:8px}
-.resumo-cat .rc-item{display:flex;justify-content:space-between;padding:5px 0;font-size:.8rem;border-bottom:1px solid #f5f5f5}
-.resumo-cat .rc-item .rc-label{color:#555}
-.resumo-cat .rc-item .rc-val{font-weight:600}
+.resumo-cat .rc-item{display:flex;justify-content:space-between;padding:7px 0;font-size:.82rem;border-bottom:1px solid #f0f2f5;align-items:center}
+.resumo-cat .rc-item .rc-label{color:#444;display:flex;align-items:center;gap:4px}
+.resumo-cat .rc-item .rc-val{font-weight:600;color:#1a1a2e}
+.resumo-cat .rc-item .rc-edit{font-size:.6rem;cursor:pointer;opacity:.3;transition:opacity .15s;padding:2px;margin-left:4px}
+.resumo-cat .rc-item .rc-edit:hover{opacity:1}
 
-.barra-total{height:6px;border-radius:3px;background:#f0f2f5;margin:8px 0;overflow:hidden}
-.barra-total .fill{height:100%;border-radius:3px;transition:width .3s}
-.barra-total .fill.ok{background:#06d6a0}
-.barra-total .fill.warn{background:#ffd166}
-.barra-total .fill.bad{background:#ef476f}
+.barra-total{height:8px;border-radius:4px;background:#eef0f4;margin:8px 0;overflow:hidden}
+.barra-total .fill{height:100%;border-radius:4px;transition:width .4s ease}
+.barra-total .fill.ok{background:linear-gradient(90deg,#06d6a0,#0a9396)}
+.barra-total .fill.warn{background:linear-gradient(90deg,#ffd166,#f77f00)}
+.barra-total .fill.bad{background:linear-gradient(90deg,#ef476f,#d90429)}
 
-.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);z-index:100;justify-content:center;align-items:flex-end;padding:0}
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);z-index:100;justify-content:center;align-items:flex-end;padding:0;backdrop-filter:blur(2px)}
 .modal-overlay.show{display:flex}
-.modal{background:#fff;border-radius:16px 16px 0 0;padding:20px;width:100%;max-height:85vh;overflow-y:auto}
-.modal h3{font-size:1rem;margin-bottom:12px}
-.modal .handle{width:36px;height:4px;background:#ddd;border-radius:2px;margin:0 auto 12px}
+.modal{background:#fff;border-radius:20px 20px 0 0;padding:20px 20px 28px;width:100%;max-height:85vh;overflow-y:auto}
+.modal h3{font-size:1rem;margin-bottom:12px;font-weight:600}
+.modal .handle{width:40px;height:4px;background:#ddd;border-radius:2px;margin:0 auto 14px}
 
-.empty-state{text-align:center;padding:30px 20px;color:#bbb}
-.empty-state .big{font-size:2.5rem;margin-bottom:8px}
+.empty-state{text-align:center;padding:40px 20px;color:#bbb}
+.empty-state .big{font-size:3rem;margin-bottom:10px}
 .empty-state p{font-size:.85rem}
 
 .badge-install{display:none;position:fixed;bottom:16px;left:16px;right:16px;background:#06d6a0;color:#fff;padding:12px 16px;border-radius:12px;text-align:center;font-size:.85rem;font-weight:600;box-shadow:0 4px 12px rgba(6,214,160,.4);z-index:50;cursor:pointer}
 .badge-install.show{display:block}
 .offline-badge{display:none;position:fixed;top:0;left:0;right:0;background:#ff6b6b;color:#fff;text-align:center;padding:4px;font-size:.7rem;z-index:200}
 .offline-badge.show{display:block}
-.fab{position:fixed;bottom:80px;right:16px;width:52px;height:52px;border-radius:50%;background:#06d6a0;color:#fff;border:none;font-size:1.5rem;box-shadow:0 4px 12px rgba(6,214,160,.4);cursor:pointer;z-index:40;display:flex;align-items:center;justify-content:center}
-.fab:active{transform:scale(.92)}
+.fab{position:fixed;bottom:80px;right:16px;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#06d6a0,#0a9396);color:#fff;border:none;font-size:1.5rem;box-shadow:0 4px 16px rgba(6,214,160,.45);cursor:pointer;z-index:40;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.fab:active{transform:scale(.9);box-shadow:0 2px 8px rgba(6,214,160,.3)}
 .fab.hidden{display:none}
 .import-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #f5f5f5;font-size:.78rem}
 .import-item .idate{color:#888;min-width:44px}
@@ -106,6 +115,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .import-item .ival.pos{color:#06d6a0}
 .import-item .icat{flex:1}
 .import-item .icat select{width:100%;padding:4px 6px;border:1px solid #ddd;border-radius:6px;font-size:.72rem;font-family:inherit;background:#fff}
+.emoji-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;margin-bottom:10px}
+.emoji-grid button{font-size:1.4rem;padding:6px;border:1px solid #eee;border-radius:8px;background:#fff;cursor:pointer;text-align:center}
+.emoji-grid button:active{background:#f0fff4;border-color:#06d6a0}
 @media(min-width:600px){body{max-width:480px;margin:0 auto}.header{border-radius:0 0 24px 24px}}
 </style>
 </head>
@@ -203,6 +215,25 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 </div>
 
+<div class="modal-overlay" id="modalCat">
+<div class="modal">
+<div class="handle"></div>
+<h3 id="modalCatTitle">Editar Categoria</h3>
+<div class="form-group">
+<label>Nome da Categoria</label>
+<input type="text" id="inputCatNome" placeholder="Ex: Supermercado">
+</div>
+<div class="form-group">
+<label>Emoji</label>
+<div class="emoji-grid" id="emojiGrid"></div>
+<input type="text" id="inputCatEmoji" placeholder="Ou digite o emoji" style="font-size:1.2rem">
+</div>
+<button class="btn btn-primary" onclick="salvarCat()">Salvar</button>
+<button class="btn btn-outline" onclick="removerCat()" id="btnResetCat" style="margin-top:6px">Restaurar padrao</button>
+<button class="btn" style="background:#f5f5f5;color:#666;margin-top:4px" onclick="fecharModalCat()">Cancelar</button>
+</div>
+</div>
+
 <button class="fab" id="fabAdd" onclick="abrirModal()">+</button>
 
 <div class="badge-install" id="installBadge">Instalar como App no celular</div>
@@ -253,7 +284,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 
 <script>
-const CATS = {
+const CAT_DEFAULTS = {
 receita: [
 {id:'salario-cynthia',nome:'Salario Cynthia',emo:'\u{1F9D1}\u{200D}\u{1F3EB}'},
 {id:'salario-priscila',nome:'Salario Priscila',emo:'\u{1F9D1}\u{200D}\u{1F3ED}'},
@@ -278,6 +309,7 @@ despesa: [
 {id:'outros-desp',nome:'Outros',emo:'\u{1F4B4}'}
 ]
 };
+const CATS = CAT_DEFAULTS;
 
 const CORES = {
 financiamento:'#4361ee',cartao:'#ef476f',supermercado:'#06d6a0',venda:'#ffd166',
@@ -292,8 +324,24 @@ transacoes: [],
 mesAtual: new Date(),
 tipoAtual: 'receita',
 editandoId: null,
-regrasCat: {}
+regrasCat: {},
+catCustom: {}
 };
+
+function getCat(id, tipo){
+const d=CAT_DEFAULTS[tipo].find(c=>c.id===id);
+const c=state.catCustom[id];
+if(!d)return c||{id,nome:id,emo:'📦'};
+if(!c)return d;
+return {...d,...c};
+}
+
+function catsAtivas(tipo){
+return CAT_DEFAULTS[tipo].map(d=>{
+const c=state.catCustom[d.id];
+return c?{...d,...c}:d;
+});
+}
 
 function carregar(){
 const d=localStorage.getItem('controleLar');
@@ -301,11 +349,12 @@ if(d){
 const data=JSON.parse(d);
 state.transacoes=data.transacoes||data;
 state.regrasCat=data.regrasCat||{};
+state.catCustom=data.catCustom||{};
 }
 }
 
 function salvar(){
-localStorage.setItem('controleLar',JSON.stringify({transacoes:state.transacoes,regrasCat:state.regrasCat}));
+localStorage.setItem('controleLar',JSON.stringify({transacoes:state.transacoes,regrasCat:state.regrasCat,catCustom:state.catCustom}));
 }
 
 function formatar(v){return v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}
@@ -369,12 +418,13 @@ document.getElementById('catGrid').querySelector('.cat-btn')?.classList.add('sel
 }
 
 function renderCatGrid(){
-const cats=CATS[state.tipoAtual];
+const cats=catsAtivas(state.tipoAtual);
 const el=document.getElementById('catGrid');
 let h='';
 cats.forEach(c=>{
 h+='<div class="cat-btn" data-id="'+c.id+'" onclick="selCat(this)">';
 h+='<span class="emo">'+c.emo+'</span>'+c.nome;
+h+='<span class="cat-edit-btn" onclick="event.stopPropagation();abrirModalCat(\''+c.id+'\',\''+state.tipoAtual+'\')">✏️</span>';
 h+='</div>';
 });
 el.innerHTML=h;
@@ -403,7 +453,7 @@ el.innerHTML=h;
 }
 
 function renderItem(t){
-const cat=t.tipo==='receita'?CATS.receita.find(c=>c.id===t.categoria):CATS.despesa.find(c=>c.id===t.categoria);
+const cat=getCat(t.categoria,t.tipo);
 const emo=cat?cat.emo:'';
 const nomeCat=cat?cat.nome:t.categoria;
 const cor=CORES[t.categoria]||'#999';
@@ -440,6 +490,54 @@ filtradas.forEach(t=>h+=renderItem(t));
 el.innerHTML=h;
 }
 
+const EMOJIS = ['🛒','🏠','🚗','🍕','💡','📱','💊','📚','🎮','👕','💧','🏦','💳','🎵','🐾','✈️','🎁','🔧','💄','🏋️','🧹','📦','🎓','👶','🍷','☕','🎬','🌿','💈','🧸','🔨','🎨'];
+
+let catEditandoId=null,catEditandoTipo=null;
+
+function abrirModalCat(id,tipo){
+catEditandoId=id;catEditandoTipo=tipo;
+const c=getCat(id,tipo);
+document.getElementById('modalCatTitle').textContent='Editar Categoria';
+document.getElementById('inputCatNome').value=c.nome;
+document.getElementById('inputCatEmoji').value=c.emo;
+document.getElementById('btnResetCat').style.display=state.catCustom[id]?'block':'none';
+const eg=document.getElementById('emojiGrid');
+eg.innerHTML=EMOJIS.map(e=>'<button onclick="selEmoji(this)" class="'+(e===c.emo?'sel':'')+'">'+e+'</button>').join('');
+document.getElementById('modalCat').classList.add('show');
+}
+function selEmoji(el){
+document.querySelectorAll('#emojiGrid button').forEach(b=>b.classList.remove('sel'));
+el.classList.add('sel');
+document.getElementById('inputCatEmoji').value=el.textContent;
+}
+function fecharModalCat(){
+document.getElementById('modalCat').classList.remove('show');
+}
+function salvarCat(){
+const nome=document.getElementById('inputCatNome').value.trim();
+const emo=document.getElementById('inputCatEmoji').value.trim();
+if(!nome){alert('Digite um nome para a categoria');return;}
+if(!emo){alert('Selecione um emoji');return;}
+state.catCustom[catEditandoId]={nome,emo};
+salvar();
+renderCatGrid();
+renderCategorias();
+renderCompleta();
+renderRecentes();
+renderImportPreview();
+fecharModalCat();
+}
+function removerCat(){
+delete state.catCustom[catEditandoId];
+salvar();
+renderCatGrid();
+renderCategorias();
+renderCompleta();
+renderRecentes();
+renderImportPreview();
+fecharModalCat();
+}
+
 function renderCategorias(){
 const ts=transacoesDoMes(state.mesAtual);
 const despesas=ts.filter(t=>t.tipo==='despesa');
@@ -457,12 +555,12 @@ el.innerHTML=h;
 return;
 }
 cats.forEach(([cat,val])=>{
-const c=CATS.despesa.find(x=>x.id===cat);
+const c=getCat(cat,'despesa');
 const nome=c?c.nome:cat;
 const emo=c?c.emo:'';
 const cor=CORES[cat]||'#999';
 const pct=total>0?(val/total*100).toFixed(1):0;
-h+='<div class="rc-item"><span class="rc-label">'+emo+' '+nome+'</span>'
+h+='<div class="rc-item"><span class="rc-label">'+emo+' '+nome+'<span class="rc-edit" onclick="abrirModalCat(\''+cat+'\',\'despesa\')">✏️</span></span>'
 +'<span class="rc-val">R$ '+formatar(val)+' ('+pct+'%)</span></div>';
 h+='<div class="barra-total"><div class="fill '+(pct>50?'bad':pct>30?'warn':'ok')+'" style="width:'+pct+'%"></div></div>';
 });
@@ -523,7 +621,7 @@ const valor=parseFloat(document.getElementById('inputValor').value);
 const data=document.getElementById('inputData').value;
 const pag=document.getElementById('inputPag').value;
 const tipo=state.tipoAtual;
-const cat=catSelecionada||(tipo==='receita'?CATS.receita[0].id:CATS.despesa[0].id);
+const cat=catSelecionada||catsAtivas(tipo)[0].id;
 
 if(!valor||valor<=0){alert('Informe um valor valido');return;}
 if(!data){alert('Informe a data');return;}
@@ -694,7 +792,7 @@ document.getElementById('importPreview').classList.remove('hidden');
 const el=document.getElementById('importLista');
 let h='<div style="margin-bottom:6px;font-size:.75rem;color:#666">Selecione a categoria de cada lancamento:</div>';
 importData.forEach((t,i)=>{
-const catsAtivas=CATS[t.tipo]||CATS.despesa;
+const catsAtiv=catsAtivas(t.tipo);
 // Tenta achar categoria automaticamente pela descricao
 const chave=t.tipo+':'+t.descricao.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
 const catAuto=state.regrasCat[chave]||'';
@@ -702,7 +800,7 @@ h+='<div class="import-item">';
 h+='<span class="idate">'+t.data.slice(5)+'</span>';
 h+='<span class="ival '+(t.tipo==='receita'?'pos':'neg')+'">R$ '+formatar(t.valor)+'</span>';
 h+='<span class="icat"><select data-idx="'+i+'">';
-catsAtivas.forEach(c=>{
+catsAtiv.forEach(c=>{
 const sel=c.id===catAuto||(!catAuto&&i===0&&t.tipo==='despesa'&&c.id==='outros-desp');
 h+='<option value="'+c.id+'" '+(sel?'selected':'')+'>'+c.nome+'</option>';
 });
@@ -755,7 +853,7 @@ renderImportPreview();
 
 // ---- BACKUP ----
 function exportarBackup(){
-const dados={versao:1,data:new Date().toISOString(),transacoes:state.transacoes};
+const dados={versao:2,data:new Date().toISOString(),transacoes:state.transacoes,regrasCat:state.regrasCat,catCustom:state.catCustom};
 const blob=new Blob([JSON.stringify(dados,null,2)],{type:'application/json'});
 const a=document.createElement('a');
 a.href=URL.createObjectURL(blob);
@@ -778,6 +876,8 @@ alert('Arquivo de backup invalido.');return;
 const qtd=dados.transacoes.length;
 if(!confirm('Importar '+qtd+' lancamentos? Os dados atuais serao SUBSTITUIDOS.'))return;
 state.transacoes=dados.transacoes;
+if(dados.regrasCat)state.regrasCat=dados.regrasCat;
+if(dados.catCustom)state.catCustom=dados.catCustom;
 salvar();
 atualizarHeader();
 renderRecentes();
