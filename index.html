@@ -183,15 +183,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div class="content hidden" id="tabImportar">
 <div class="card">
 <h3>Importar Extrato Bancario</h3>
-<p style="font-size:.8rem;color:#666;margin-bottom:10px">Baixe o extrato do seu banco (CSV ou OFX) e importe aqui. Os lancamentos serao adicionados automaticamente.</p>
-<label class="btn btn-primary" style="display:block;text-align:center;cursor:pointer;margin-bottom:10px">
-&#x1F4C2; Selecionar Arquivo
+<div style="font-size:.8rem;color:#666;margin-bottom:10px">
+<p style="margin-bottom:8px"><strong>Opcao 1:</strong> Abra o PDF do extrato no celular, toque e segure o texto, selecione tudo e copie. Depois cole abaixo.</p>
+<textarea id="colarTexto" rows="5" style="width:100%;padding:8px;border:1.5px solid #ddd;border-radius:8px;font-size:.72rem;font-family:monospace;resize:vertical;outline:none" placeholder="Cole aqui o texto copiado do PDF do extrato Itau..."></textarea>
+<button class="btn btn-primary" onclick="importarTexto()" style="margin-top:6px;margin-bottom:10px">&#x1F4CB; Importar Texto Colado</button>
+</div>
+<div style="border-top:1px solid #eee;padding-top:10px;font-size:.8rem;color:#888">ou</div>
+<label class="btn btn-outline" style="display:block;text-align:center;cursor:pointer;margin-top:8px;margin-bottom:8px">
+&#x1F4C2; Selecionar Arquivo CSV/OFX
 <input type="file" id="fileInput" accept=".csv,.ofx,.qfx,.ofc" style="display:none" onchange="importarArquivo(event)">
 </label>
-<div id="instrucoesBanco" style="font-size:.75rem;color:#888;margin-bottom:6px">
-<strong>Bancos suportados:</strong> Caixa, Itau, Bradesco, Santander, BB e outros.<br>
-Formatos: CSV (separado por virgula/ponto-e-virgula) e OFX/QFX.
-</div>
 </div>
 <div id="importPreview" class="hidden">
 <div class="card">
@@ -693,12 +694,25 @@ salvar();
 importData=[];
 document.getElementById('importPreview').classList.add('hidden');
 document.getElementById('fileInput').value='';
+document.getElementById('colarTexto').value='';
 alert(selects.length+' lancamentos importados com sucesso!');
 atualizarHeader();
 renderRecentes();
 renderCompleta();
 renderCategorias();
 mostrarTab('resumo');
+}
+
+function importarTexto(){
+const texto=document.getElementById('colarTexto').value.trim();
+if(!texto){alert('Cole o texto do extrato primeiro.');return;}
+const parsed=parseCSV(texto);
+if(!parsed.length){
+alert('Nao foi possivel reconhecer lancamentos. Verifique se copiou o texto completo do PDF.');
+return;
+}
+importData=parsed;
+renderImportPreview();
 }
 
 // ---- BACKUP ----
