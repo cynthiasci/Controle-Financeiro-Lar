@@ -68,6 +68,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .btn{width:100%;padding:12px;border:none;border-radius:10px;font-size:.9rem;font-weight:600;cursor:pointer;font-family:inherit}
 .btn:active{opacity:.8}
 .btn-primary{background:#06d6a0;color:#fff}
+.btn-outline{background:transparent;color:#06d6a0;border:1.5px solid #06d6a0}
 .btn-danger{background:#ef476f;color:#fff}
 
 .resumo-cat{margin-top:8px}
@@ -141,6 +142,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div class="card" id="ultimosLancamentos">
 <h3>Ultimos Lancamentos</h3>
 <div id="listaRecentes"></div>
+</div>
+<div class="card" style="text-align:center">
+<h3>Backup dos Dados</h3>
+<div style="font-size:.75rem;color:#888;margin-bottom:8px">Exporte seus dados para salvar na nuvem ou importe de um backup anterior.</div>
+<button class="btn btn-primary" onclick="exportarBackup()" style="margin-bottom:6px">&#x1F4E5; Exportar Backup</button>
+<label class="btn btn-outline" style="display:block;text-align:center;cursor:pointer;background:transparent;color:#06d6a0;border:1.5px solid #06d6a0;padding:12px;border-radius:10px;font-size:.9rem;font-weight:600;font-family:inherit">
+&#x1F4C2; Importar Backup
+<input type="file" id="backupInput" accept=".json" style="display:none" onchange="importarBackup(event)">
+</label>
 </div>
 </div>
 
@@ -690,6 +700,46 @@ renderCompleta();
 renderCategorias();
 mostrarTab('resumo');
 }
+
+// ---- BACKUP ----
+function exportarBackup(){
+const dados={versao:1,data:new Date().toISOString(),transacoes:state.transacoes};
+const blob=new Blob([JSON.stringify(dados,null,2)],{type:'application/json'});
+const a=document.createElement('a');
+a.href=URL.createObjectURL(blob);
+const nome='controle-financeiro-backup-'+new Date().toISOString().slice(0,10)+'.json';
+a.download=nome;
+a.click();
+URL.revokeObjectURL(a.href);
+}
+
+function importarBackup(e){
+const file=e.target.files[0];
+if(!file)return;
+const reader=new FileReader();
+reader.onload=function(ev){
+try{
+const dados=JSON.parse(ev.target.result);
+if(!dados.transacoes||!Array.isArray(dados.transacoes)){
+alert('Arquivo de backup invalido.');return;
+}
+const qtd=dados.transacoes.length;
+if(!confirm('Importar '+qtd+' lancamentos? Os dados atuais serao SUBSTITUIDOS.'))return;
+state.transacoes=dados.transacoes;
+salvar();
+atualizarHeader();
+renderRecentes();
+renderCompleta();
+renderCategorias();
+alert(qtd+' lancamentos importados com sucesso!');
+}catch(e){
+alert('Erro ao ler o arquivo. Verifique se e um backup valido.');
+}
+};
+reader.readAsText(file);
+}
+
+// ---- FIM BACKUP ----
 
 // Init
 carregar();
